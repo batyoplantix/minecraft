@@ -2,7 +2,7 @@ local function loadConfig()
     local config = {}
     local file = fs.open("triable.txt", "r")
     if file then
-        for line in file.readAll():gmatch("[^]+") do
+        for line in file.readAll():gmatch("([^\n]+)") do
             local name, group = line:match("(%S+)%s*:%s*(%S+)")
             if name and group then
                 config[name] = tonumber(group)
