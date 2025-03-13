@@ -81,7 +81,7 @@ local function handleRepair(chestTable, repairChest)
         local inventory = peripheral.wrap(chest)
         if inventory then
             for slot, item in pairs(inventory.list()) do
-                if item.durability and item.durability < 0.9 then
+                if item.durability and item.damage / item.maxDamage < 0.9 then
                     inventory.pushItems(peripheral.getName(repairChest), slot)
                 end
             end
@@ -91,7 +91,7 @@ local function handleRepair(chestTable, repairChest)
     local repairInventory = peripheral.wrap(peripheral.getName(repairChest))
     if repairInventory then
         for slot, item in pairs(repairInventory.list()) do
-            if item.durability and item.durability >= 1 then
+            if item.durability and item.damage <= 1 then
                 sendToGroup(chestTable, repairInventory, slot, 0)
             end
         end
