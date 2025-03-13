@@ -5,7 +5,7 @@ local function loadConfig()
         for line in file.readAll():gmatch("([^\n]+)") do
             local name, group = line:match("(%S+)%s*:%s*(%S+)")
             if name and group then
-                config[name] = tonumber(group)
+                config["minecraft:"..name] = tonumber(group)
             end
         end
         file.close()
