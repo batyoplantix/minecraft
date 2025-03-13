@@ -1,3 +1,5 @@
+local repairChest = peripheral.wrap("minecraft:chest_0")
+
 local function loadConfig()
     local config = {}
     local file = fs.open("triable.txt", "r")
@@ -74,11 +76,33 @@ local function trier(chestTable)
     end
 end
 
+local function handleRepair(chestTable, repairChest)
+    for chest, _ in pairs(chestTable) do
+        local inventory = peripheral.wrap(chest)
+        if inventory then
+            for slot, item in pairs(inventory.list()) do
+                if item.durability and item.durability < 0.9 then
+                    inventory.pushItems(peripheral.getName(repairChest), slot)
+                end
+            end
+        end
+    end
+    
+    local repairInventory = peripheral.wrap(peripheral.getName(repairChest))
+    if repairInventory then
+        for slot, item in pairs(repairInventory.list()) do
+            if item.durability and item.durability >= 1 then
+                sendToGroup(chestTable, repairInventory, slot, 0)
+            end
+        end
+    end
+end
+
 local function mainLoop()
     while true do
         local chestTable = loadConfig()
         trier(chestTable)
-        --handleRepair(chestTable)
+        handleRepair(chestTable , repairChest)
         os.sleep(10) -- Pause avant la prochaine itération
     end
 end
