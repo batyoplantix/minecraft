@@ -2,8 +2,6 @@ flint : 1
 stick : 1
 bone_meal : 1
 clay_ball : 1
-nautilus_shell : 1
-heart_of_the_sea : 1
 ender_eye : 1
 popped_chorus_fruit : 1
 disc_fragment_5 : 1
@@ -34,6 +32,9 @@ glowstone_dust : 1
 fermented_spider_eye : 1
 glistering_melon_slice : 1
 sugar : 1
+skeleton_skull : 2
+dragon_head : 2
+dragon_egg : 2
 rotten_flesh : 2
 spider_eye : 2
 bone : 2
@@ -306,6 +307,8 @@ pufferfish_bucket : 10
 axolotl_bucket : 10
 sea_lantern : 10
 prismarine : 10
+nautilus_shell : 10
+heart_of_the_sea : 10
 prismarine_stairs : 10
 prismarine_slab : 10
 prismarine_wall : 10
@@ -356,6 +359,10 @@ wet_sponge : 10
 bamboo : 11
 sugar_cane : 11
 cactus : 11
+warped_fungus : 11
+wither_rose : 11
+red_tulip : 11
+white_tulip : 11
 crimson_roots : 11
 warped_roots : 11
 nether_sprouts : 11
@@ -369,6 +376,7 @@ lilac : 11
 rose_bush : 11
 peony : 11
 pitcher_plant : 11
+orange_tulip : 11
 big_dripleaf : 11
 small_dripleaf : 11
 glow_lichen : 11
@@ -383,6 +391,7 @@ pitcher_pod : 11
 melon : 11
 pumpkin : 11
 lily_pad : 11
+azure_bluet : 11
 wheat : 11
 carved_pumpkin : 11
 jack_o_lantern : 11
@@ -417,6 +426,8 @@ warped_door : 12
 warped_trapdoor : 12
 warped_pressure_plate : 12
 warped_button : 12
+oak_log : 12
+oak_planks : 12
 oak_leaves : 12
 spruce_leaves : 12
 birch_leaves : 12
@@ -427,6 +438,13 @@ acacia_leaves : 12
 cherry_leaves : 12
 azalea_leaves : 12
 flowering_azalea_leaves : 12
+oxeye_daisy : 12
+poppy : 12
+grass : 12
+allium : 12
+pink_tulip : 12
+brown_mushroom : 12
+lily_of_the_valley : 12
 oak_sapling : 12
 spruce_sapling : 12
 birch_sapling : 12
@@ -438,6 +456,9 @@ cherry_sapling : 12
 chiseled_bookshelf : 12
 barrel : 12
 chest : 12
+crafting_table : 12
+furnace : 12
+spruce_log : 12
 spruce_trapdoor : 12
 spruce_button : 12
 birch_log : 12
@@ -494,6 +515,8 @@ dark_oak_door : 12
 dark_oak_trapdoor : 12
 dark_oak_pressure_plate : 12
 mangrove_log : 12
+spruce_stairs : 12
+spruce_slabs : 12
 mangrove_wood : 12
 stripped_mangrove_log : 12
 dark_oak_button : 12
@@ -526,6 +549,10 @@ bamboo_planks : 12
 bamboo_mosaic : 12
 emerald_ore : 13
 diamond_ore : 13
+iron_ore : 13
+deepslate_iron_ore : 13
+coal_ore : 13
+emerald_block : 13
 deepslate_diamond_ore : 13
 nether_gold_ore : 13
 nether_quartz_ore : 13
@@ -545,6 +572,7 @@ quartz : 13
 amethyst_shard : 13
 netherite_ingot : 13
 netherite_scrap : 13
+copper_ore : 13
 gold_ingot : 13
 copper_ingot : 13
 iron_ingot : 13
@@ -605,6 +633,7 @@ blue_bed : 15
 purple_bed : 15
 magenta_bed : 15
 pink_bed : 15
+brown_bed : 15
 candle : 15
 white_candle : 15
 light_gray_candle : 15
@@ -658,6 +687,7 @@ orange_carpet : 15
 light_gray_carpet : 15
 armor_stand : 15
 bell : 15
+iron_bars : 15
 sandstone : 16
 sandstone_stairs : 16
 sandstone_slab : 16
@@ -858,6 +888,7 @@ light_blue_concrete_powder : 20
 blue_concrete_powder : 20
 purple_concrete_powder : 20
 magenta_concrete_powder : 20
+terracota : 20
 pink_concrete_powder : 20
 white_glazed_terracotta : 20
 light_gray_glazed_terracotta : 20
@@ -933,6 +964,8 @@ composter : 23
 cauldron : 23
 redstone_lamp : 23
 tnt : 23
+lodestone : 23
+item_frame : 23
 iron_trapdoor : 23
 oak_trapdoor : 23
 clay : 24
