@@ -5,7 +5,7 @@ local function loadConfig()
         for line in file.readAll():gmatch("[^]+") do
             local name, group = line:match("(%S+)%s*:%s*(%S+)")
             if name and group then
-                config[name] = group
+                config[name] = tonumber(group)
             end
         end
         file.close()
@@ -22,7 +22,7 @@ local function loadFile(filename)
         for line in file.readAll():gmatch("[^\n]+") do
             local key, value = line:match("(%S+)%s*:%s*(%S+)")
             if key and value then
-                data[key] = tonumber(value) or value
+                data[key] = tonumber(value)
             end
         end
         file.close()
@@ -44,7 +44,7 @@ local function determine(item, classement, minecraftCategory)
     return group
 end
 
-local function sendToGroup(chestTable, inevntory, slot, groupNumber)
+local function sendToGroup(chestTable, inventory, slot, groupNumber)
     for targetChest, targetGroup in pairs(chestTable) do
         if targetGroup == groupNumber then
             if inventory and inventory.pushItems(targetChest, slot) > 0 then
@@ -65,7 +65,7 @@ local function trier(chestTable)
             for slot, item in pairs(inventory.list()) do
                 local groupNumber = determine(item.name, classement, minecraftCategory)
                 if group ~= groupNumber then
-                  sendToGroup(chestTable, ineventory, slot, groupNumber)
+                  sendToGroup(chestTable, inventory, slot, groupNumber)
                 end
             end
         else
