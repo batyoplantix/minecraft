@@ -1,12 +1,11 @@
-local monitor = peripheral.wrap("top") --on attend un ecran de control sur le dessus
-local mainConfig = "main.txt" --nom du fichier indiquant tout les fichier de gestion
-local wifi = peripheral.wrap("bottom") --on attend que il y a un wireless modem ou ender modem en dessous de l'ordinateur
-local channel = 666 --channel de gestion du système
-local newChestConfig = {} --cette variable servira a changer le group des coffre a vif
-local classement , modedException , minecraftCategory
-local needAssignement = false -- cette variable sert a determiner si on doit modifier le fichier de type triable
-local usersRequest = {} --tableau contenant tout les requete de ressource par joueur
-local users = {} --tableau contenant le coffre a envoyé les requête
+monitor = peripheral.wrap("top") --on attend un ecran de control sur le dessus
+mainConfig = "main.txt" --nom du fichier indiquant tout les fichier de gestion
+wifi = peripheral.wrap("bottom") --on attend que il y a un wireless modem ou ender modem en dessous de l'ordinateur
+channel = 666 --channel de gestion du système
+newChestConfig = {} --cette variable servira a changer le group des coffre a vif
+needAssignement = false -- cette variable sert a determiner si on doit modifier le fichier de type triable
+usersRequest = {} --tableau contenant tout les requete de ressource par joueur
+users = {} --tableau contenant le coffre a envoyé les requête
 
 local function takeRequest(identifier, itemName, quantity)
     if not usersRequest[identifier] then
@@ -91,7 +90,7 @@ local function loadUsersConfig(chargedConfig)
         end
         file.close()
     else
-        print("Erreur : Impossible de charger le fichier users)
+        print("Erreur : Impossible de charger le fichier users")
     end
 end
 
@@ -114,7 +113,7 @@ end
 
 local function loadTriableConfig(chargedConfig)
     local config = {}
-    local file = fs.open(chargedConfig["triable"], "r")
+    local file = fs.open(chargedConfig, "r")
     if file then
         for line in file.readAll():gmatch("([^\n]+)") do
             local name, group = line:match("(%S+)%s*:%s*(%S+)")
@@ -135,6 +134,23 @@ local function loadFile(filename)
     if file then
         for line in file.readAll():gmatch("[^\n]+") do
             local key, value = line:match("(%S+)%s*:%s*(%S+)")
+            if key and value then
+                data[key] = tonumber(value)
+            end
+        end
+        file.close()
+    else
+        print("Erreur : Impossible de charger le fichier " .. filename)
+    end
+    return data
+end
+
+local function loadException(filename)
+    local data = {}
+    local file = fs.open(filename, "r")
+    if file then
+        for line in file.readAll():gmatch("[^\n]+") do
+            local key, value = line:match("([^:]+:[^:]+)%s*:%s*(%d+)")
             if key and value then
                 data[key] = tonumber(value)
             end
@@ -222,7 +238,7 @@ end
 
 local function mainLoop()
     while true do
-        local chestTable = loadTriableConfig(chargedConfig)
+        local chestTable = loadTriableConfig(chargedConfig["triable"]])
         trier(chestTable , classement , minecraftCategory , modedException)
         if chargedConfig["repairChest"] then
             handleRepair(chestTable , chargedConfig["repairChest"])
@@ -230,7 +246,7 @@ local function mainLoop()
         trier(chestTable , classement , minecraftCategory , modedException)
         if needAssignement then
             updateTriable()
-            needAssignement == false
+            needAssignement = false
         end
         processRequest(chestTable)
         os.sleep(2) -- Pause avant la prochaine itération
@@ -275,11 +291,11 @@ local function networkingLoop() --actuelle non implémenté
     end
 end
 
-local chargedConfig = loadMainConfig(mainConfig)
+chargedConfig = loadMainConfig(mainConfig)
 if chargedConfig then 
     classement = loadFile(chargedConfig["classement"])
     minecraftCategory = loadFile(chargedConfig["minecraftCategory"])
-    modedException = loadFile(chargedConfig["modException"])
+    modedException = loadException(chargedConfig["modException"])
     loadUsersConfig(chargedConfig)
 end
 
