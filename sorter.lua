@@ -34,7 +34,7 @@ local function processRequest(chestTable)
     for identifier, requests in pairs(usersRequest) do
         for itemName, quantity in pairs(requests) do
             local groupNumber = determine(itemName, classement, minecraftCategory, modedException)
-            for chest, group in pairs(newChestConfig) do
+            for chest, group in pairs(chestTable) do
                 if group == groupNumber then
                     local inventory = peripheral.wrap(chest)
                     if inventory then
