@@ -7,11 +7,27 @@ needAssignement = false -- cette variable sert a determiner si on doit modifier 
 usersRequest = {} --tableau contenant tout les requete de ressource par joueur
 users = {} --tableau contenant le coffre a envoyé les requête
 
+local function determine(item, classement, minecraftCategory , modedException)
+    
+    local namespace, itemName = item:match("([^:]+):([^:]+)")
+    if (modedException[item] or 0) ~= 0 then
+        return modedException[item]
+    end
+    if not namespace or not itemName then
+        return 0
+    end
+    local group = classement[namespace] or 0
+    if group == 0 then
+        group = minecraftCategory[itemName] or 0
+    end
+    return group
+end
+
 local function takeRequest(identifier, itemName, quantity)
     if not usersRequest[identifier] then
         usersRequest[identifier] = {}
     end
-    usersRequest[identifier][itemName] = (usersRequest[identifier][itemName] or 0) + toNumber(quantity)
+    usersRequest[identifier][itemName] = (usersRequest[identifier][itemName] or 0) + tonumber(quantity)
 end
 
 local function processRequest(chestTable)
@@ -162,21 +178,7 @@ local function loadException(filename)
     return data
 end
 
-local function determine(item, classement, minecraftCategory , modedException)
-    
-    local namespace, itemName = item:match("([^:]+):([^:]+)")
-    if (modedException[item] or 0) ~= 0 then
-        return modedException[item]
-    end
-    if not namespace or not itemName then
-        return 0
-    end
-    local group = classement[namespace] or 0
-    if group == 0 then
-        group = minecraftCategory[itemName] or 0
-    end
-    return group
-end
+
 
 local function sendToGroup(chestTable, inventory, slot, groupNumber)
     for targetChest, targetGroup in pairs(chestTable) do
@@ -186,7 +188,7 @@ local function sendToGroup(chestTable, inventory, slot, groupNumber)
             end
         end
     end
-    monitor.scroll(-10)
+    monitor.scroll(10)
     monitor.write("item group:".. groupNumber .." est plein!!!")
     return false
 end
@@ -204,7 +206,7 @@ local function trier(chestTable )
                 end
             end
         else
-            monitor.scroll(-10)
+            monitor.scroll(10)
             monitor.write("le stockage :"..chest.." est inategnable")
         end
     end
@@ -216,7 +218,7 @@ local function handleRepair(chestTable, repairChest)
         if inventory then
             for slot, item in pairs(inventory.list()) do
                 if item.durability and (item.damage or 0) / (item.maxDamage or 1) > 0.2 then
-                    monitor.scroll(-10)
+                    monitor.scroll(10)
                     monitor.write("envoie de ".. item.name .. " a la reparation!")
                     inventory.pushItems(peripheral.getName(repairChest), slot)
                 end
@@ -228,7 +230,7 @@ local function handleRepair(chestTable, repairChest)
     if repairInventory then
         for slot, item in pairs(repairInventory.list()) do
             if item.durability and (item.damage or 0) == 0 then
-                monitor.scroll(-10)
+                monitor.scroll(10)
                 monitor.write(item.name .. " a fini de être reparer!")
                 sendToGroup(chestTable, repairInventory, slot, 0)
             end
@@ -255,8 +257,7 @@ end
 
 local function parseMessage(message)
     local params = {}
-    for param in message:gmatch('("[^"]+"|%S+)') do
-        param = param:gsub('^"(.-)"$', "%1") -- Retire les guillemets si présents
+    for param in message:gmatch('([%w_:]+)') do
         table.insert(params, param)
     end
     return unpack(params) -- Retourne chaque élément individuellement
@@ -283,7 +284,7 @@ local function networkingLoop() --actuelle non implémenté
             if paramOne and paramTwo and paramThree then
                 if determine(paramTwo ,classement, minecraftCategory , modedException) ~= 0 then
                 takeRequest(paramOne , paramTwo , paramThree)
-                monitor.scroll(-10)
+                monitor.scroll(10)
                 monitor.write("utilisateur:"..paramOne.." a reserver :"..paramTwo .. " * "..paramThree)
                 end
             end
