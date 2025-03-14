@@ -1,18 +1,18 @@
-local repairChest = peripheral.wrap("minecraft:chest_0")
-
-local function loadConfig()
+local monitor = peripheral.wrap("top")
+local mainConfig = "main.txt"
+local function loadTriableConfig(chargedConfig)
     local config = {}
-    local file = fs.open("triable.txt", "r")
+    local file = fs.open(chargedConfig["triable"], "r")
     if file then
         for line in file.readAll():gmatch("([^\n]+)") do
             local name, group = line:match("(%S+)%s*:%s*(%S+)")
             if name and group then
-                config["minecraft:"..name] = tonumber(group)
+                config[name] = tonumber(group)
             end
         end
         file.close()
     else
-        print("Erreur : Impossible de charger le fichier triable.txt")
+        print("Erreur : Impossible de charger le fichier de trie")
     end
     return config
 end
@@ -34,8 +34,12 @@ local function loadFile(filename)
     return data
 end
 
-local function determine(item, classement, minecraftCategory)
+local function determine(item, classement, minecraftCategory , modedException)
+    
     local namespace, itemName = item:match("([^:]+):([^:]+)")
+    if (modedException[item.name] or 0) ~= 0 then
+        return modedException[item.name]
+    end
     if not namespace or not itemName then
         return 0
     end
@@ -54,18 +58,19 @@ local function sendToGroup(chestTable, inventory, slot, groupNumber)
             end
         end
     end
+    monitor.scroll(-10)
+    monitor.write("item group:".. groupNumber .." est plein!!!")
     return false
 end
 
-local function trier(chestTable)
-    local classement = loadFile("classement.txt")
-    local minecraftCategory = loadFile("minecraftCategory.txt")
+local function trier(chestTable )
+    
     
     for chest, group in pairs(chestTable) do
         local inventory = peripheral.wrap(chest)
         if inventory then
             for slot, item in pairs(inventory.list()) do
-                local groupNumber = determine(item.name, classement, minecraftCategory)
+                local groupNumber = determine(item.name, classement, minecraftCategory , modedException)
                 if group ~= groupNumber then
                   sendToGroup(chestTable, inventory, slot, groupNumber)
                 end
@@ -81,17 +86,21 @@ local function handleRepair(chestTable, repairChest)
         local inventory = peripheral.wrap(chest)
         if inventory then
             for slot, item in pairs(inventory.list()) do
-                if item.durability and item.damage / item.maxDamage < 0.9 then
+                if item.durability and (item.damage or 0) / (item.maxDamage or 1) > 0.2 then
+                    monitor.scroll(-10)
+                    monitor.write("envoie de ".. item.name .. " a la reparation!")
                     inventory.pushItems(peripheral.getName(repairChest), slot)
                 end
             end
         end
     end
     
-    local repairInventory = peripheral.wrap(peripheral.getName(repairChest))
+    local repairInventory = peripheral.wrap(repairChest)
     if repairInventory then
         for slot, item in pairs(repairInventory.list()) do
-            if item.durability and item.damage <= 1 then
+            if item.durability and (item.damage or 0) == 0 then
+                monitor.scroll(-10)
+                monitor.write(item.name .. " a fini de être reparer!")
                 sendToGroup(chestTable, repairInventory, slot, 0)
             end
         end
@@ -99,11 +108,20 @@ local function handleRepair(chestTable, repairChest)
 end
 
 local function mainLoop()
+    local chargedConfig = loadMainConfig(mainConfig)
+    if chargedConfig then 
+        classement = loadFile(chargedConfig["classement")
+        minecraftCategory = loadFile(chargedConfig["minecraftCategory"])
+        modedException = loadFile(chargedConfig["modException"])
+    end
     while true do
-        local chestTable = loadConfig()
-        trier(chestTable)
-        handleRepair(chestTable , repairChest)
-        os.sleep(10) -- Pause avant la prochaine itération
+        local chestTable = loadTriableConfig(chargedConfig)
+        trier(chestTable , classement , minecraftCategory , modedException)
+        if chargedConfig["repairChest"] then
+            handleRepair(chestTable , chargedConfig["repairChest"])
+        end
+        trier(chestTable , classement , minecraftCategory , modedException)
+        os.sleep(2) -- Pause avant la prochaine itération
     end
 end
 
