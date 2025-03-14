@@ -5,7 +5,45 @@ local channel = 666 --channel de gestion du système
 local newChestConfig = {} --cette variable servira a changer le group des coffre a vif
 local classement , modedException , minecraftCategory
 local needAssignement = false -- cette variable sert a determiner si on doit modifier le fichier de type triable
+local usersRequest = {} --tableau contenant tout les requete de ressource par joueur
+local users = {} --tableau contenant le coffre a envoyé les requête
 
+local function takeRequest(identifier, itemName, quantity)
+    if not usersRequest[identifier] then
+        usersRequest[identifier] = {}
+    end
+    usersRequest[identifier][itemName] = (usersRequest[identifier][itemName] or 0) + toNumber(quantity)
+end
+
+local function processRequest(chestTable)
+    for identifier, requests in pairs(usersRequest) do
+        for itemName, quantity in pairs(requests) do
+            local groupNumber = determine(itemName, classement, minecraftCategory, modedException)
+            for chest, group in pairs(newChestConfig) do
+                if group == groupNumber then
+                    local inventory = peripheral.wrap(chest)
+                    if inventory then
+                        for slot, item in pairs(inventory.list()) do
+                            if item.name == itemName then
+                                local sentAmount = inventory.pushItems(users[identifier], slot, quantity)
+                                quantity = quantity - sentAmount
+                                if quantity <= 0 then
+                                    usersRequest[identifier][itemName] = nil
+                                    break
+                                else
+                                    usersRequest[identifier][itemName] = quantity
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+            if next(usersRequest[identifier]) == nil then
+                usersRequest[identifier] = nil
+            end
+        end
+    end
+end
 
 local function updateChestConfig(storageName, groupNumber)
     local triableFile = chargedConfig["triable"]
@@ -38,6 +76,22 @@ local function updateTriable()
         file.close()
     else
         print("Erreur : Impossible d'écrire dans le fichier de trie")
+    end
+end
+
+local function loadUsersConfig(chargedConfig)
+    local file = fs.open(chargedConfig["users"], "r")
+    if file then
+        for line in file.readAll():gmatch("([^\n]+)") do
+            local name, chest = line:match("(%S+)%s*:%s*(%S+)")
+            if name and chest then
+                users[name] = chest
+                usersRequest[name] = {}
+            end
+        end
+        file.close()
+    else
+        print("Erreur : Impossible de charger le fichier users)
     end
 end
 
@@ -174,6 +228,11 @@ local function mainLoop()
             handleRepair(chestTable , chargedConfig["repairChest"])
         end
         trier(chestTable , classement , minecraftCategory , modedException)
+        if needAssignement then
+            updateTriable()
+            needAssignement == false
+        end
+        processRequest(chestTable)
         os.sleep(2) -- Pause avant la prochaine itération
     end
 end
@@ -201,7 +260,17 @@ local function networkingLoop() --actuelle non implémenté
               wifi.transmit(replyChannel , channel , groupNumber)
             end
         elseif commande == "assign" then 
-            
+            if paramOne and paramTwo then
+            updateChestConfig(paramOne , paramTwo)
+            end
+        elseif commande == "request" then
+            if paramOne and paramTwo and paramThree then
+                if determine(paramTwo ,classement, minecraftCategory , modedException) ~= then
+                takeRequest(paramOne , paramTwo , paramThree)
+                monitor.scroll(-10)
+                monitor.write("utilisateur:"..paramOne.." a reserver :"..paramTwo .. " * "..paramThree)
+                end
+            end
         end
     end
 end
@@ -211,6 +280,7 @@ if chargedConfig then
     classement = loadFile(chargedConfig["classement"])
     minecraftCategory = loadFile(chargedConfig["minecraftCategory"])
     modedException = loadFile(chargedConfig["modException"])
+    loadUsersConfig(chargedConfig)
 end
 
 parallel.waitForAll(mainLoop, networkingLoop)
