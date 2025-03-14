@@ -1,5 +1,26 @@
-local monitor = peripheral.wrap("top")
-local mainConfig = "main.txt"
+local monitor = peripheral.wrap("top") --on attend un ecran de control sur le dessus
+local mainConfig = "main.txt" --nom du fichier indiquant tout les fichier de gestion
+local wifi = peripheral.wrap("bottom") --on attend que il y a un wireless modem ou ender modem en dessous de l'ordinateur
+local channel = 666 --channel de gestion du système
+local newChestConfig = {} --cette variable servira a changer le group des coffre a vif
+
+local function loadMainConfig(mainConfig)
+    local chargedConfig = {}
+    local file = fs.open(mainConfig, "r")
+    if file then
+        for line in file.readAll():gmatch("([^\n]+)") do
+            local name, fichier = line:match("(%S+)%s*:%s*(%S+)")
+            if name and group then
+                chargedConfig[name] = fichier
+            end
+        end
+        file.close()
+    else
+        print("Erreur : Impossible de charger le fichier main Config")
+    end
+    return chargedConfig
+end
+
 local function loadTriableConfig(chargedConfig)
     local config = {}
     local file = fs.open(chargedConfig["triable"], "r")
@@ -76,7 +97,8 @@ local function trier(chestTable )
                 end
             end
         else
-            print("Erreur : Impossible d'accéder au coffre " .. chest)
+            monitor.scroll(-10)
+            monitor.write("le stockage :"..chest.." est inategnable")
         end
     end
 end
@@ -125,4 +147,16 @@ local function mainLoop()
     end
 end
 
-mainLoop()
+local function networkingLoop() --actuelle non implémenté
+    wifi.open(channel)
+    local event, side, chanel, replyChannel, message, distance
+    while true do
+    repeat
+          event, side, chanel, replyChannel, message, distance = os.pullEvent("modem_message")
+    until chanel == channel
+        --local commande , paramOne , paramTwo , paramThree , ParamFour = message a decomposer tout les parametre doit être separer par des espace sauf si le parammetre est entouré de guillemet
+    end
+end
+
+
+parallel.waitForAll(mainLoop, networkingLoop)
