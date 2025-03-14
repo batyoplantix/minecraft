@@ -3,6 +3,43 @@ local mainConfig = "main.txt" --nom du fichier indiquant tout les fichier de ges
 local wifi = peripheral.wrap("bottom") --on attend que il y a un wireless modem ou ender modem en dessous de l'ordinateur
 local channel = 666 --channel de gestion du système
 local newChestConfig = {} --cette variable servira a changer le group des coffre a vif
+local classement , modedException , minecraftCategory
+local needAssignement = false -- cette variable sert a determiner si on doit modifier le fichier de type triable
+
+
+local function updateChestConfig(storageName, groupNumber)
+    local triableFile = chargedConfig["triable"]
+    local updatedConfig = {}
+    local file = fs.open(triableFile, "r")
+    if file then
+        for line in file.readAll():gmatch("([^\n]+)") do
+            local name, group = line:match("(%S+)%s*:%s*(%S+)")
+            if name then
+                updatedConfig[name] = tonumber(group)
+            end
+        end
+        file.close()
+    end
+    
+    -- Met à jour ou ajoute la nouvelle configuration
+    updatedConfig[storageName] = tonumber(groupNumber)
+    newChestConfig = updatedConfig
+    needAssignment = true
+end
+
+local function updateTriable()
+    local triableFile = chargedConfig["triable"]
+    fs.delete(triableFile)
+    file = fs.open(triableFile, "w")
+    if file then
+        for name, group in pairs(newChestConfig) do
+            file.writeLine(name .. " : " .. group )
+        end
+        file.close()
+    else
+        print("Erreur : Impossible d'écrire dans le fichier de trie")
+    end
+end
 
 local function loadMainConfig(mainConfig)
     local chargedConfig = {}
@@ -10,7 +47,7 @@ local function loadMainConfig(mainConfig)
     if file then
         for line in file.readAll():gmatch("([^\n]+)") do
             local name, fichier = line:match("(%S+)%s*:%s*(%S+)")
-            if name and group then
+            if name and fichier then
                 chargedConfig[name] = fichier
             end
         end
@@ -130,12 +167,6 @@ local function handleRepair(chestTable, repairChest)
 end
 
 local function mainLoop()
-    local chargedConfig = loadMainConfig(mainConfig)
-    if chargedConfig then 
-        classement = loadFile(chargedConfig["classement")
-        minecraftCategory = loadFile(chargedConfig["minecraftCategory"])
-        modedException = loadFile(chargedConfig["modException"])
-    end
     while true do
         local chestTable = loadTriableConfig(chargedConfig)
         trier(chestTable , classement , minecraftCategory , modedException)
@@ -147,6 +178,15 @@ local function mainLoop()
     end
 end
 
+local function parseMessage(message)
+    local params = {}
+    for param in message:gmatch('("[^"]+"|%S+)') do
+        param = param:gsub('^"(.-)"$', "%1") -- Retire les guillemets si présents
+        table.insert(params, param)
+    end
+    return unpack(params) -- Retourne chaque élément individuellement
+end
+
 local function networkingLoop() --actuelle non implémenté
     wifi.open(channel)
     local event, side, chanel, replyChannel, message, distance
@@ -154,9 +194,23 @@ local function networkingLoop() --actuelle non implémenté
     repeat
           event, side, chanel, replyChannel, message, distance = os.pullEvent("modem_message")
     until chanel == channel
-        --local commande , paramOne , paramTwo , paramThree , ParamFour = message a decomposer tout les parametre doit être separer par des espace sauf si le parammetre est entouré de guillemet
+        local commande , paramOne , paramTwo , paramThree , ParamFour = parseMessage(message)
+        if commande == "determine" then
+            if paramOne then
+              local groupNumber = determine(paramOne ,classement, minecraftCategory , modedException)
+              wifi.transmit(replyChannel , channel , groupNumber)
+            end
+        elseif commande == "assign" then 
+            
+        end
     end
 end
 
+local chargedConfig = loadMainConfig(mainConfig)
+if chargedConfig then 
+    classement = loadFile(chargedConfig["classement"])
+    minecraftCategory = loadFile(chargedConfig["minecraftCategory"])
+    modedException = loadFile(chargedConfig["modException"])
+end
 
 parallel.waitForAll(mainLoop, networkingLoop)
