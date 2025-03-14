@@ -265,7 +265,7 @@ local function networkingLoop() --actuelle non implémenté
             end
         elseif commande == "request" then
             if paramOne and paramTwo and paramThree then
-                if determine(paramTwo ,classement, minecraftCategory , modedException) ~= then
+                if determine(paramTwo ,classement, minecraftCategory , modedException) ~= 0 then
                 takeRequest(paramOne , paramTwo , paramThree)
                 monitor.scroll(-10)
                 monitor.write("utilisateur:"..paramOne.." a reserver :"..paramTwo .. " * "..paramThree)
