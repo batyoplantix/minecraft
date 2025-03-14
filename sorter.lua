@@ -150,7 +150,7 @@ local function loadException(filename)
     local file = fs.open(filename, "r")
     if file then
         for line in file.readAll():gmatch("[^\n]+") do
-            local key, value = line:match("([^:]+:[^:]+)%s*:%s*(%d+)")
+            local key, value = line:match("(%S+:%S+)%s*:%s*(%d+)")
             if key and value then
                 data[key] = tonumber(value)
             end
@@ -165,8 +165,8 @@ end
 local function determine(item, classement, minecraftCategory , modedException)
     
     local namespace, itemName = item:match("([^:]+):([^:]+)")
-    if (modedException[item.name] or 0) ~= 0 then
-        return modedException[item.name]
+    if (modedException[item] or 0) ~= 0 then
+        return modedException[item]
     end
     if not namespace or not itemName then
         return 0
@@ -238,7 +238,7 @@ end
 
 local function mainLoop()
     while true do
-        local chestTable = loadTriableConfig(chargedConfig["triable"]])
+        local chestTable = loadTriableConfig(chargedConfig["triable"])
         trier(chestTable , classement , minecraftCategory , modedException)
         if chargedConfig["repairChest"] then
             handleRepair(chestTable , chargedConfig["repairChest"])
