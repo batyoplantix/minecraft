@@ -77,7 +77,7 @@ local function updateChestConfig(storageName, groupNumber)
     -- Met à jour ou ajoute la nouvelle configuration
     updatedConfig[storageName] = tonumber(groupNumber)
     newChestConfig = updatedConfig
-    needAssignment = true
+    needAssignement = true
 end
 
 local function updateTriable()
