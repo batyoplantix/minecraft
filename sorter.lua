@@ -188,7 +188,7 @@ local function sendToGroup(chestTable, inventory, slot, groupNumber)
             end
         end
     end
-    monitor.scroll(10)
+    monitor.scroll(-1)
     monitor.write("item group:".. groupNumber .." est plein!!!")
     return false
 end
@@ -206,7 +206,8 @@ local function trier(chestTable )
                 end
             end
         else
-            monitor.scroll(10)
+            monitor.setCursorPos(1,1)
+            monitor.scroll(-1)
             monitor.write("le stockage :"..chest.." est inategnable")
         end
     end
@@ -218,7 +219,8 @@ local function handleRepair(chestTable, repairChest)
         if inventory then
             for slot, item in pairs(inventory.list()) do
                 if item.durability and (item.damage or 0) / (item.maxDamage or 1) > 0.2 then
-                    monitor.scroll(10)
+                    monitor.setCursorPos(1,1)
+                    monitor.scroll(-1)
                     monitor.write("envoie de ".. item.name .. " a la reparation!")
                     inventory.pushItems(peripheral.getName(repairChest), slot)
                 end
@@ -230,7 +232,8 @@ local function handleRepair(chestTable, repairChest)
     if repairInventory then
         for slot, item in pairs(repairInventory.list()) do
             if item.durability and (item.damage or 0) == 0 then
-                monitor.scroll(10)
+                monitor.setCursorPos(1,1)
+                monitor.scroll(-1)
                 monitor.write(item.name .. " a fini de être reparer!")
                 sendToGroup(chestTable, repairInventory, slot, 0)
             end
@@ -284,7 +287,8 @@ local function networkingLoop() --actuelle non implémenté
             if paramOne and paramTwo and paramThree then
                 if determine(paramTwo ,classement, minecraftCategory , modedException) ~= 0 then
                 takeRequest(paramOne , paramTwo , paramThree)
-                monitor.scroll(10)
+                    monitor.setCursorPos(1,1)
+                monitor.scroll(-1)
                 monitor.write("utilisateur:"..paramOne.." a reserver :"..paramTwo .. " * "..paramThree)
                 end
             end
