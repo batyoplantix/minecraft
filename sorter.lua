@@ -252,6 +252,9 @@ local function mainLoop()
         if needAssignement then
             updateTriable()
             needAssignement = false
+            monitor.setCursorPos(1,1)
+            monitor.scroll(-1)
+            monitor.write("la disposition des coffre a été mi a jour")
         end
         processRequest(chestTable)
         os.sleep(2) -- Pause avant la prochaine itération
@@ -287,7 +290,7 @@ local function networkingLoop() --actuelle non implémenté
             if paramOne and paramTwo and paramThree then
                 if determine(paramTwo ,classement, minecraftCategory , modedException) ~= 0 then
                 takeRequest(paramOne , paramTwo , paramThree)
-                    monitor.setCursorPos(1,1)
+                monitor.setCursorPos(1,1)
                 monitor.scroll(-1)
                 monitor.write("utilisateur:"..paramOne.." a reserver :"..paramTwo .. " * "..paramThree)
                 end
