@@ -39,7 +39,7 @@ while true do
 end
 
 -- Lecture audio
-local url = "https://raw.githubusercontent.com/USER/REPO/BRANCH/fichier.dfpwm"
+local url = "https://github.com/batyoplantix/minecraft/raw/refs/heads/main/Rick%20Astley%20-%20Never%20Gonna%20Give%20You%20Up%20(Official%20Music%20Video).dfpwm"
 local h = http.get(url)
 if not h then error("Échec du téléchargement de l'audio") end
 
