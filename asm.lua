@@ -45,7 +45,7 @@ if not h then error("Échec du téléchargement de l'audio") end
 
 local decoder = dfpwm.make_decoder()
 while true do
-    local chunk = h:read(16 * 1024)
+    local chunk = h.read(16 * 1024)
     if not chunk or #chunk == 0 then break end
 
     local buffer = decoder(chunk)
