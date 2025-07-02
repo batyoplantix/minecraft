@@ -3,7 +3,7 @@ local pos2 = {x = 20, y = 70, z = 20}
 
 -- Nom du joueur leader
 local leader = "lamastico"
-local url1 = "https://raw.githubusercontent.com/USER/REPO/BRANCH/fichier.dfpwm"
+local url1 = "https://github.com/batyoplantix/minecraft/raw/refs/heads/main/BRUIT1.dfpwm"
 local url2 = "https://github.com/batyoplantix/minecraft/raw/refs/heads/main/Bruit2.dfpwm"
 local url3 ="https://github.com/batyoplantix/minecraft/raw/refs/heads/main/Bruit3.dfpwm"
 local url4 = "https://github.com/batyoplantix/minecraft/raw/refs/heads/main/bruit4.dfpwm"
