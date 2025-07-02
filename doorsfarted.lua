@@ -5,7 +5,7 @@ local pos2 = {x = 20, y = 70, z = 20}
 local leader = "lamastico"
 local url1 = "https://raw.githubusercontent.com/USER/REPO/BRANCH/fichier.dfpwm"
 local url2 = "https://raw.githubusercontent.com/USER/REPO/BRANCH/fichier.dfpwm"
-local url3 = "https://raw.githubusercontent.com/USER/REPO/BRANCH/fichier.dfpwm"
+local url3 ="https://github.com/batyoplantix/minecraft/raw/refs/heads/main/Bruit3.dfpwm"
 local url4 = "https://github.com/batyoplantix/minecraft/raw/refs/heads/main/bruit4.dfpwm"
 local speaker = peripheral.wrap("speaker_1")
 -- Nom du périphérique Player Detector (ex: "playerDetector_0")
