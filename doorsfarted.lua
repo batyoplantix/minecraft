@@ -40,3 +40,5 @@ function checkPlayersInZone()
     end
     end
 end
+
+checkPlayersInZone()
