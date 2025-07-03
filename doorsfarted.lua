@@ -11,6 +11,7 @@ local speaker = peripheral.wrap("speaker_1")
 local redstoneRelay = peripheral.wrap("redstone_Relay_0")
 local redstoneRelayTwo = peripheral.wrap("redstone_Relay_1")
 local relayCheck = peripheral.wrap("redstone_Relay_2")
+local chatBox = peripheral.wrap("chatbox")
 -- Nom du périphérique Player Detector (ex: "playerDetector_0")
 local playerDetector = peripheral.wrap("playerDetector_0")
 local triggerMessage = "labX"
@@ -31,6 +32,18 @@ local function triggerRedTwo()
     redstoneRelayTwo.setOutput("back", true)  -- Changez "back" selon la face que vous utilisez
     sleep(1)
     redstoneRelayTwo.setOutput("back", false)
+end
+
+function statusA(etat)
+    local message = "ouverte : " .. etat
+
+    chatBox.sendMessageToPlayer(playerName, message)
+end
+
+function statusB(etat)
+    local message = "fonctionnelle : " .. !etat
+
+    chatBox.sendMessageToPlayer(playerName, message)
 end
 
 local function checkRedstone()
