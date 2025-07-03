@@ -37,13 +37,13 @@ end
 function statusA(etat)
     local message = "ouverte : " .. etat
 
-    chatBox.sendMessageToPlayer(playerName, message)
+    chatBox.sendMessageToPlayer(leader, message)
 end
 
 function statusB(etat)
-    local message = "fonctionnelle : " .. !etat
+    local message = "fonctionnelle : " .. not etat
 
-    chatBox.sendMessageToPlayer(playerName, message)
+    chatBox.sendMessageToPlayer(leader, message)
 end
 
 local function checkRedstone()
@@ -64,8 +64,9 @@ function checkPlayersInZone()
         
             local decoder = dfpwm.make_decoder()
             local h = choisirAleatoirement()
+            local bruit = http.get(h)
             while true do
-              local chunk = h.read(16 * 1024)
+              local chunk = bruit.read(16 * 1024)
               if not chunk or #chunk == 0 then break end
 
               local buffer = decoder(chunk)
@@ -91,4 +92,4 @@ function vocalChecks()
     end
 end
 
-checkPlayersInZone()
+parallel.waitForAny(checkPlayersInZone, vocalChecks)
